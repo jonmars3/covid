@@ -7,4 +7,4 @@ How to run:
 
 * Using an *Android* *Machine* (emulator or phone);
 
-* Make sure you are running at least API$\geq$19.
+* Make sure you are running at least API&ge;19.
