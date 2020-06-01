@@ -13,7 +13,7 @@ public class HeroTile implements Tile {
     public HeroTile(){
         brush = new Paint();
         brush.setStyle(Paint.Style.FILL_AND_STROKE);
-        brush.setColor(Color.BLUE);
+        brush.setColor(Color.GREEN);
 
     }
 

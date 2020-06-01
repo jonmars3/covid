@@ -14,7 +14,7 @@ public class WallTile implements Tile {
         brush = new Paint();
         brush.setStyle(Paint.Style.FILL_AND_STROKE);
 
-        brush.setColor(Color.BLUE);
+        brush.setColor(Color.RED);
 
     }
     //TODO: Remove when manage to make the images appear.
