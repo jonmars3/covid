@@ -1,4 +1,4 @@
-package pt.isel.poo.tile;
+package pt.isel.poo.covid.tile;
 
 import android.content.Context;
 import android.graphics.Canvas;

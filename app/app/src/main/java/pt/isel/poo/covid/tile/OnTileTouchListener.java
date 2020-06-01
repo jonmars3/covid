@@ -1,4 +1,4 @@
-package pt.isel.poo.tile;
+package pt.isel.poo.covid.tile;
 
 /**
  * Listener of tiles touches and moves.
