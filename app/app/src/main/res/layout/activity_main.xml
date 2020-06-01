@@ -13,7 +13,7 @@
         android:layout_marginTop="50dp"
         android:text="Load"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/boardView" />
+        app:layout_constraintTop_toBottomOf="@+id/levelView" />
 
     <Button
         android:id="@+id/saveButton"
@@ -24,7 +24,7 @@
         app:layout_constraintEnd_toStartOf="@+id/loadButton"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/boardView" />
+        app:layout_constraintTop_toBottomOf="@+id/levelView" />
 
     <ImageButton
         android:id="@+id/leftButton"
@@ -79,14 +79,14 @@
             android:textSize="30sp" />
     </LinearLayout>
 
-    <edu.isel.adeetc.covid.tile.TilePanel
-        android:id="@+id/boardView"
+    <pt.isel.poo.covid.tile.TilePanel
+        android:id="@+id/levelView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
         android:layout_marginEnd="1dp"
-        android:background ="@color/colorBackground"
+        android:background="@color/colorBackground"
         app:backgroundTiles="@color/colorBackground"
         app:gridLine="1"
         app:heightTiles="9"
