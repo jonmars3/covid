@@ -1,5 +1,8 @@
 package pt.isel.poo.covid.model;
 
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public  class Level {
@@ -13,10 +16,9 @@ public  class Level {
     public int arenaLevel;
 
     /**
-     *
-     * @param levelNumber
-     * @param height
-     * @param width
+     *  @param levelNumber the number of the level
+     * @param height the height of the level
+     * @param width the width of the level
      */
     public Level(int levelNumber, int height, int width) {
 
@@ -42,10 +44,18 @@ public  class Level {
     }
 
     private final LevelElement[][]elements;
+
+    ArrayList<Character> charElements = new ArrayList<Character>();
     /**
      * Resets the bidemensional array.
      */
     public void reset() {
+
+        for (int row = 0; row < arenaHeight; row++) {
+            for (int col = 0; col < arenaWidth; col++) {
+                elements[row][col] = null;
+            }
+        }
     }
 
     /**
@@ -57,6 +67,7 @@ public  class Level {
      */
     public void put(int l, int c, char type) {
 
+        charElements.add(type);
         switch (type) {
             case '@':
 
@@ -83,6 +94,8 @@ public  class Level {
                 break;
         }
     }
+
+
 
     //TODO: Do this in a better way
     /**
@@ -148,5 +161,32 @@ public  class Level {
     public LevelElement getElementAt(int c, int l) {
         return elements[c][l];
     }
+
+
+    public void save(PrintStream output,int savedLevel){
+        int i = 0 ;
+
+        output.printf("#%d %d x %d %n" ,savedLevel,arenaHeight,arenaWidth );
+        System.out.printf("#%d %d x %d %n",savedLevel,arenaHeight,arenaWidth );
+        for (int row = 0; row < arenaHeight; row++) {
+        //TODO: FIX THIS
+            for (int col = 0 ; col < arenaWidth; col++ , i++) {
+                output.print(charElements.get(i));
+                System.out.print(charElements.get(i));
+                if(i%8 == 0 && i != 0 ){
+                    output.println();
+                    System.out.println();
+                }
+
+
+
+            }
+        }
+    }
+
 }
+
+
+
+
 
