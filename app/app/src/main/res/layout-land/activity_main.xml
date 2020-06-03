@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:id="@+id/topLayout"
-        android:layout_width="415dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="1dp"
@@ -56,8 +56,8 @@
 
     <RelativeLayout
         android:id="@+id/botLayout"
-        android:layout_width="415dp"
-        android:layout_height="255dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,15 +88,16 @@
         <LinearLayout
             android:id="@+id/leftRightLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/saveLoadLayout"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="0"
             android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/leftButton"
                 android:layout_width="150dp"
                 android:layout_height="100dp"
+                android:layout_weight="1"
                 android:src="@drawable/iconleft" />
 
             <Space
@@ -108,7 +109,7 @@
                 android:id="@+id/rightButton"
                 android:layout_width="150dp"
                 android:layout_height="100dp"
-                android:layout_
+                android:layout_weight="1"
                 android:src="@drawable/iconright" />
 
         </LinearLayout>
