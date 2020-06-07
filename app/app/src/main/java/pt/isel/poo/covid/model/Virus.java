@@ -2,10 +2,47 @@ package pt.isel.poo.covid.model;
 
 
 public class Virus extends LevelElement {
-    public Virus(Location location) {
+
+    private int arenaWidth,arenaHeight;
+    private Direction currentDirection;
+    private boolean isDead;
+    private Level level;
+
+    public Virus(Location location,Direction direction,int arenaWidth,int arenaHeight,Level level) {
         super(location);
+        this.currentDirection = direction;
+        this.arenaWidth = arenaWidth;
+        this.arenaHeight = arenaHeight;
+        this.level = level;
+
+    }
+
+    public boolean canMove(Direction direction){
+        final Location newLocation = position.add(direction);
+        return newLocation.x >= 0 && newLocation.x < arenaWidth &&
+                newLocation.y >= 0 && newLocation.y < arenaHeight &&
+                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Wall) &&
+                !(level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+
+    }
+
+    /**
+     * Moves the virus in the selected direction
+     */
+    public void move() {
+
+        if (canMove(currentDirection)) {
+
+            Location oldPosition = position;
+            position = position.add(currentDirection);
+            level.swap(oldPosition,position);
+
+        }
     }
 
 
+    public void changeDirection(Direction newDirection) {
+        currentDirection = newDirection;
+    }
 }
 
