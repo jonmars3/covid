@@ -22,7 +22,8 @@ public class Virus extends LevelElement {
         return newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight &&
                 !(level.getElementAt(newLocation.x,newLocation.y) instanceof Wall) &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+                !(level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan) &&
+                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Virus);
 
     }
 
