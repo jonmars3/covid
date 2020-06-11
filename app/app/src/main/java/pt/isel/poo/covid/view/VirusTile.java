@@ -1,28 +1,31 @@
 package pt.isel.poo.covid.view;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import pt.isel.poo.covid.R;
+import pt.isel.poo.covid.tile.Img;
 import pt.isel.poo.covid.tile.Tile;
 
 public class VirusTile implements Tile {
 
     private final Paint brush;
+    private Img img;
 
-    public VirusTile(){
+
+    public VirusTile(Context context){
         brush = new Paint();
-        brush.setStyle(Paint.Style.FILL_AND_STROKE);
+        img = new Img(context, R.drawable.virus);
 
-        brush.setColor(Color.BLUE);
 
     }
-    //TODO: Remove when manage to make the images appear.
 
     @Override
     public void draw(Canvas canvas, int side) {
 
-        canvas.drawRect(4, 4, side-4, side-4, brush);
+        img.draw(canvas,side,side,brush);
     }
 
     @Override
@@ -30,4 +33,3 @@ public class VirusTile implements Tile {
         return false;
     }
 }
-
