@@ -5,8 +5,8 @@ public class Virus extends LevelElement {
 
     private int arenaWidth,arenaHeight;
     private Direction currentDirection;
-    private boolean isDead;
     private Level level;
+    private boolean isDead;
 
     public Virus(Location location,Direction direction,int arenaWidth,int arenaHeight,Level level) {
         super(location);
@@ -37,10 +37,22 @@ public class Virus extends LevelElement {
             Location oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
+        }
+
+        if(isDead){
+            level.deleteElement(position);
 
         }
+
     }
 
+    public boolean isDead(Direction direction){
+        final Location newLocation = position.add(direction);
+        if(newLocation.x >= 0 && newLocation.x < arenaWidth &&
+                newLocation.y >= 0 && newLocation.y < arenaHeight)
+            isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+        return isDead;
+    }
 
     public void changeDirection(Direction newDirection) {
         currentDirection = newDirection;
