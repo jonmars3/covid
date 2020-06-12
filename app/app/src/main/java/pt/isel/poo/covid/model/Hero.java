@@ -7,8 +7,8 @@ public class Hero extends LevelElement {
 
     private int arenaWidth,arenaHeight;
     private Direction currentDirection;
-    private boolean isDead;
     private Level level;
+    private boolean isDead;
 
     /**
      * Initiates a Hero placing it at the given location.
@@ -19,11 +19,7 @@ public class Hero extends LevelElement {
         this.currentDirection = initialDirection;
         this.arenaHeight = arenaHeight;
         this.arenaWidth = arenaWidth;
-        this.isDead = false;
         this.level = level;
-
-
-
     }
 
 
@@ -34,25 +30,31 @@ public class Hero extends LevelElement {
                 !(level.getElementAt(newLocation.x,newLocation.y) instanceof Wall) &&
                 !(level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan)&&
                 !(level.getElementAt(newLocation.x,newLocation.y) instanceof Virus);
-
     }
 
     /**
      * Moves the hero in the selected direction
      */
     public void move() {
-       /* if (isDead)
-            throw new IllegalStateException();*/
+        if (isDead)
+            throw new IllegalStateException();
         if (canMove(currentDirection)) {
 
             Location oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
-
         }
+
     }
 
-    public boolean isDead () {
+    public void isDead(Direction direction){
+        final Location newLocation = position.add(direction);
+        isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+
+
+    }
+
+    public boolean getDead(){
         return isDead;
     }
 
@@ -63,5 +65,4 @@ public class Hero extends LevelElement {
     public void changeDirection(Direction newDirection) {
         currentDirection = newDirection;
     }
-
 }
