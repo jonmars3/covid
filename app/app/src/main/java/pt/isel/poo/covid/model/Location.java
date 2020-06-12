@@ -18,5 +18,8 @@ public class Location {
         this.y = y;
     }
 
+    public Location add(Direction direction) {
+        return new Location(x + direction.dx, y + direction.dy);
+    }
 
 }
