@@ -2,8 +2,11 @@ package pt.isel.poo.covid.model;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+
+import pt.isel.poo.covid.view.LevelView;
 
 public  class Level {
     /**
@@ -14,6 +17,11 @@ public  class Level {
      *Level arena level
      */
     public int arenaLevel;
+
+    private final LevelElement[][]elements;     //Array that contains the elements.
+    private char [][]charElements ;             //Array that contains the chars that represent the elements, so it's easier to save on a file afterwards.
+
+    ArrayList<Virus> virusList = new ArrayList<Virus>();
 
     /**
      *  @param levelNumber the number of the level
@@ -26,6 +34,7 @@ public  class Level {
         arenaWidth = width;
         arenaHeight = height;
         elements = new LevelElement[width][height];
+        charElements = new char [width][height];
 
     }
 
@@ -43,12 +52,10 @@ public  class Level {
         return loader.load(currentLevel);
     }
 
-    private final LevelElement[][]elements;
-
-    ArrayList<Character> charElements = new ArrayList<Character>();
     /**
-     * Resets the bidemensional array.
+     * Resets the bi-dimensional array.
      */
+    //TODO: Created due to being used in a method of the Loader class(which wasn't used), See what do with it.
     public void reset() {
 
         for (int row = 0; row < arenaHeight; row++) {
@@ -59,7 +66,7 @@ public  class Level {
     }
 
     /**
-     * Places the elements on the bidemensional array
+     * Places the elements on the bi-dimensional array
      *
      * @param l    the "row" where the element will be placed.
      * @param c    the "column" where the element will be placed.
@@ -67,7 +74,8 @@ public  class Level {
      */
     public void put(int l, int c, char type) {
 
-        charElements.add(type);
+        charElements[c][l] = type;
+
         switch (type) {
             case '@':
 
@@ -79,12 +87,14 @@ public  class Level {
 
                 initWall(c, l);
                 elements[c][l] = charToLevelElement(type);
+
                 break;
 
             case '*':
 
                 initVirus(c, l);
                 elements[c][l] = charToLevelElement(type);
+
                 break;
 
             case 'V':
@@ -142,9 +152,9 @@ public  class Level {
      * @param l the "row" where the element will be placed.
      */
     private void initVirus(int c, int l) {
-        virus = new Virus(new Location(c, l));
+        virus = new Virus(new Location(c, l),Direction.NONE,arenaWidth,arenaHeight,this);
+        virusList.add(virus);
     }
-
 
     private void initTrashCan(int c, int l) {
         trashCan = new TrashCan(new Location(c, l));
@@ -155,11 +165,38 @@ public  class Level {
     }
 
     private void initHero(int c, int l) {
-        hero = new Hero(new Location(c, l));
+        hero = new Hero(new Location(c, l),Direction.NONE,arenaWidth,arenaHeight,this);
+    }
+
+    public Hero getHero(){
+        return hero;
+    }
+
+
+    public Virus getVirus(int i){
+        return virusList.get(i);
+    }
+
+    public int getVirusCount(){
+        return virusList.size();
     }
 
     public LevelElement getElementAt(int c, int l) {
         return elements[c][l];
+    }
+
+    public void swap (Location oldLocation,Location newLocation){
+
+        elements[newLocation.x][newLocation.y] = elements[oldLocation.x][oldLocation.y] ;
+        charElements[newLocation.x][newLocation.y] = charElements[oldLocation.x][oldLocation.y];
+        elements[oldLocation.x][oldLocation.y] = null;
+        charElements[oldLocation.x][oldLocation.y] = '.';
+    }
+
+    public void deleteElement(Location oldLocation){
+        elements[oldLocation.x][oldLocation.y] = null;
+        charElements[oldLocation.x][oldLocation.y] = '.';
+
     }
 
 
@@ -167,23 +204,14 @@ public  class Level {
         int i = 0 ;
 
         output.printf("#%d %d x %d %n" ,savedLevel,arenaHeight,arenaWidth );
-        System.out.printf("#%d %d x %d %n",savedLevel,arenaHeight,arenaWidth );
         for (int row = 0; row < arenaHeight; row++) {
-        //TODO: FIX THIS
-            for (int col = 0 ; col < arenaWidth; col++ , i++) {
-                output.print(charElements.get(i));
-                System.out.print(charElements.get(i));
-                if(i%8 == 0 && i != 0 ){
-                    output.println();
-                    System.out.println();
-                }
 
-
-
+            for (int col = 0 ; col < arenaWidth; col++) {
+                output.print(charElements[col][row]);
+                if(col%8 ==0 && col != 0 )output.println();
             }
         }
     }
-
 }
 
 
