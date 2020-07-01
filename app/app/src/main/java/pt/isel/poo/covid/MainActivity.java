@@ -1,6 +1,7 @@
 package pt.isel.poo.covid;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.TimeAnimator;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String FILENAME = "covid_levels.txt";
     private final String SAVEFILE = "saved_level.txt";
+    private final String TESTFILE = "test_file.txt";
     private Level level ;
     private Scanner in  ;
     private int currentLevel = 1;
@@ -47,17 +49,29 @@ public class MainActivity extends AppCompatActivity {
         final TextView virusText = findViewById(R.id.virusText);
         final TextView levelText = findViewById(R.id.levelText);
         final TilePanel panel = findViewById(R.id.levelView);
-
-        try {
-            initializeLevel(FILENAME,currentLevel,panel,levelText,virusText,virusArray);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Loader.LevelFormatException e) {
-            e.printStackTrace();
+        if(savedInstanceState == null) {
+            try {
+                initializeLevel(FILENAME, currentLevel, panel, levelText, virusText, virusArray);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Loader.LevelFormatException e) {
+                e.printStackTrace();
+            }
         }
+        else{
+            try {
+                    loadSavedLevel(TESTFILE,currentLevel,panel,levelText,virusText,virusArray);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Loader.LevelFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         Button saveButton = findViewById(R.id.saveButton);
         //save on file
+        //TODO: implement save by just creating a new Level object
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try (PrintStream output = new PrintStream(openFileOutput(SAVEFILE, MODE_PRIVATE))) {
@@ -267,5 +281,19 @@ public class MainActivity extends AppCompatActivity {
         finish();
         deleteFile(SAVEFILE);
         System.exit(0);
+    }
+
+
+    //TODO: There might be a better way to do this
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        try (PrintStream output = new PrintStream(openFileOutput(TESTFILE, MODE_PRIVATE))) {
+            level.save(output,currentLevel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
