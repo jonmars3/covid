@@ -1,5 +1,10 @@
 package pt.isel.poo.covid.model;
 
+import android.content.Context;
+
+import pt.isel.poo.covid.tile.Tile;
+import pt.isel.poo.covid.view.HeroTile;
+
 /**
  * Represents the Hero in the game
  */
@@ -50,8 +55,6 @@ public class Hero extends LevelElement {
     public void isDead(Direction direction){
         final Location newLocation = position.add(direction);
         isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
-
-
     }
 
     public boolean getDead(){
@@ -65,4 +68,19 @@ public class Hero extends LevelElement {
     public void changeDirection(Direction newDirection) {
         currentDirection = newDirection;
     }
+
+
+    public Tile tileType(Context context){
+        Tile tile = new HeroTile(context);
+        return tile;
+    }
+
 }
+
+
+
+
+
+
+
+

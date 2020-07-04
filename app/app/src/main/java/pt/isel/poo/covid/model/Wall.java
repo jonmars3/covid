@@ -1,5 +1,10 @@
 package pt.isel.poo.covid.model;
 
+import android.content.Context;
+
+import pt.isel.poo.covid.tile.Tile;
+import pt.isel.poo.covid.view.WallTile;
+
 public class Wall extends LevelElement {
 
     /**
@@ -9,5 +14,11 @@ public class Wall extends LevelElement {
     public Wall(Location location) {
         super(location);
     }
+
+    public Tile tileType(Context context){
+        Tile tile = new WallTile(context);
+        return tile;
+    }
+
 }
 

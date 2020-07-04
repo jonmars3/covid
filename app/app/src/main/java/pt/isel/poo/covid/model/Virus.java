@@ -1,6 +1,11 @@
 package pt.isel.poo.covid.model;
 
 
+import android.content.Context;
+
+import pt.isel.poo.covid.tile.Tile;
+import pt.isel.poo.covid.view.VirusTile;
+
 public class Virus extends LevelElement {
 
     private int arenaWidth,arenaHeight;
@@ -58,5 +63,11 @@ public class Virus extends LevelElement {
     public void changeDirection(Direction newDirection) {
         currentDirection = newDirection;
     }
+
+    public Tile tileType(Context context){
+        Tile tile = new VirusTile(context);
+        return tile;
+    }
+
 }
 

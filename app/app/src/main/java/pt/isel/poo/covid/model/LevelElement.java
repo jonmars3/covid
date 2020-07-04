@@ -1,5 +1,9 @@
 package pt.isel.poo.covid.model;
 
+import android.content.Context;
+
+import pt.isel.poo.covid.tile.Tile;
+
 public abstract class LevelElement {
 
     protected Location position;
@@ -12,5 +16,8 @@ public abstract class LevelElement {
         return position;
     }
 
+    public Tile tileType(Context context){
+        return null ;
 
+    }
 }
