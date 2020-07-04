@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                         currentLevel = savedLevel;
                         loadSavedLevel(SAVEFILE,currentLevel,panel,levelText,virusText,virusArray);
+                        hideButtons();
                     }
                     else {
                         showButtons(getResources().getString(R.string.nothingToLoad));

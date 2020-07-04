@@ -2,11 +2,10 @@ package pt.isel.poo.covid.model;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 import java.util.Scanner;
 
-import pt.isel.poo.covid.view.LevelView;
+
 
 public  class Level {
     /**
@@ -21,7 +20,7 @@ public  class Level {
     private final LevelElement[][]elements;     //Array that contains the elements.
     private char [][]charElements ;             //Array that contains the chars that represent the elements, so it's easier to save on a file afterwards.
 
-    ArrayList<Virus> virusList = new ArrayList<Virus>();
+    ArrayList<Virus> virusList = new ArrayList<Virus>(); //Array that contains the virus present in the current level
 
     /**
      *  @param levelNumber the number of the level
@@ -46,11 +45,11 @@ public  class Level {
         return arenaLevel;
     }
 
-
     public static Level setLevel(Scanner in, int currentLevel) throws Loader.LevelFormatException {
         Loader loader = new Loader(in);
         return loader.load(currentLevel);
     }
+
 
     /**
      * Resets the bi-dimensional array.
@@ -80,51 +79,31 @@ public  class Level {
             case '@':
 
                 initHero(c, l);
-                elements[c][l] = charToLevelElement(type);
+                elements[c][l] = hero;
                 break;
 
             case 'X':
 
                 initWall(c, l);
-                elements[c][l] = charToLevelElement(type);
-
+                elements[c][l] = wall;
                 break;
 
             case '*':
 
                 initVirus(c, l);
-                elements[c][l] = charToLevelElement(type);
+                elements[c][l] = virus;
 
                 break;
 
             case 'V':
 
                 initTrashCan(c, l);
-                elements[c][l] = charToLevelElement(type);
+                elements[c][l] = trashCan;
                 break;
+
+            default:
+                elements[c][l] = null;
         }
-    }
-
-
-
-    //TODO: Do this in a better way
-    /**
-     *
-     * @param type char that represents the
-     * @return
-     */
-    private LevelElement charToLevelElement(char type) {
-        switch (type) {
-            case '@':
-                return hero;
-            case 'X':
-                return wall;
-            case '*':
-                return virus;
-            case 'V':
-                return trashCan;
-        }
-        return null;
     }
 
     /**
@@ -213,8 +192,3 @@ public  class Level {
         }
     }
 }
-
-
-
-
-
