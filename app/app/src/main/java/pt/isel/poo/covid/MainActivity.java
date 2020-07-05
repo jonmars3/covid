@@ -60,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             try {
-                    loadSavedLevel(TESTFILE,currentLevel,panel,levelText,virusText,virusArray);
+                SharedPreferences prefs = getSharedPreferences("PreferencesName", MODE_PRIVATE);
+                currentLevel = prefs.getInt("currentLevel", 0);
+                loadSavedLevel(TESTFILE,currentLevel,panel,levelText,virusText,virusArray);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Loader.LevelFormatException e) {
@@ -295,6 +297,9 @@ public class MainActivity extends AppCompatActivity {
 
         try (PrintStream output = new PrintStream(openFileOutput(TESTFILE, MODE_PRIVATE))) {
             level.save(output,currentLevel);
+            SharedPreferences.Editor editor = getSharedPreferences("PreferencesName", MODE_PRIVATE).edit();
+            editor.putInt("currentLevel", currentLevel);
+            editor.apply();
         } catch (IOException e) {
             e.printStackTrace();
         }
