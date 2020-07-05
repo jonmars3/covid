@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.TimeAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private Level level ;
     private Scanner in  ;
     private int currentLevel = 1;
-    private int savedLevel;
     private LevelView view;
     private Hero hero;
     TextView gameStateText;
@@ -75,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try (PrintStream output = new PrintStream(openFileOutput(SAVEFILE, MODE_PRIVATE))) {
-                    savedLevel = currentLevel;
-                    level.save(output,savedLevel);
+                    SharedPreferences.Editor editor = getSharedPreferences("PreferencesName", MODE_PRIVATE).edit();
+                    editor.putInt("savedLevel", currentLevel);
+                    editor.apply();
+
+                    level.save(output,currentLevel);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -107,7 +110,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if(fileExists(MainActivity.this)) {
 
-                        currentLevel = savedLevel;
+                        SharedPreferences prefs = getSharedPreferences("PreferencesName", MODE_PRIVATE);
+                        currentLevel = prefs.getInt("savedLevel", 0);
                         loadSavedLevel(SAVEFILE,currentLevel,panel,levelText,virusText,virusArray);
                         hideButtons();
                     }
@@ -233,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
 
         in = new Scanner(getAssets().open(fileName));
         level = level.setLevel(in,currentLevel);
-        view = new LevelView(panel,level,MainActivity.this);
+        view = new LevelView(panel,level);
         hero = level.getHero();
         levelText.setText(getResources().getString(R.string.level) + currentLevel);
         for (int i = 0; i < level.getVirusCount(); i++) {
@@ -246,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
 
         in = new Scanner(openFileInput(fileName));
         level = level.setLevel(in,currentLevel);
-        view = new LevelView(panel,level,MainActivity.this);
+        view = new LevelView(panel,level);
         hero = level.getHero();
         levelText.setText(getResources().getString(R.string.level) + currentLevel);
         virusArray.clear();
@@ -280,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void quit(){
         finish();
-        deleteFile(SAVEFILE);
         System.exit(0);
     }
 
