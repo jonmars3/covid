@@ -71,7 +71,7 @@ public class Hero extends LevelElement {
 
 
     public Tile tileType(Context context){
-        Tile tile = new HeroTile(context);
+        Tile tile = new HeroTile(context,this);
         return tile;
     }
 
