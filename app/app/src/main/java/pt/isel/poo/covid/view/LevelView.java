@@ -19,14 +19,12 @@ public class LevelView {
 
     private final TilePanel panel;
     private final Level level;
-    private Context context;
 
 
 
-    public LevelView(TilePanel panel, Level level,Context context) {
+    public LevelView(TilePanel panel, Level level) {
         this.panel = panel;
         this.level = level;
-        this.context = context;
         initialize();
         
     }
@@ -57,18 +55,7 @@ public class LevelView {
         final LevelElement element = level.getElementAt(position.x, position.y);
         Tile tile = null;
 
-        if (element instanceof Hero)
-            tile = new HeroTile(context);
-
-        if (element instanceof TrashCan)
-            tile = new TrashCanTile(context);
-
-        if  (element instanceof Wall)
-            tile = new WallTile(context);
-
-        if  (element instanceof Virus)
-            tile = new VirusTile(context);
-
-        panel.setTile(position.x, position.y, tile);
+        if(element!=null) tile = element.tileType(panel.getContext());
+        panel.setTile(position.x, position.y,tile);
     }
 }
