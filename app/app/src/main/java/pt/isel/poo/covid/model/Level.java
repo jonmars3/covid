@@ -8,18 +8,11 @@ import java.util.Scanner;
 
 
 public  class Level {
-    /**
-     * Level arena boundaries
-     */
+
+
     public final int arenaWidth, arenaHeight;
-    /**
-     *Level arena level
-     */
     public int arenaLevel;
-
     private final LevelElement[][]elements;     //Array that contains the elements.
-    private char [][]charElements ;             //Array that contains the chars that represent the elements, so it's easier to save on a file afterwards.
-
     ArrayList<Virus> virusList = new ArrayList<Virus>(); //Array that contains the virus present in the current level
 
     /**
@@ -33,7 +26,6 @@ public  class Level {
         arenaWidth = width;
         arenaHeight = height;
         elements = new LevelElement[width][height];
-        charElements = new char [width][height];
 
     }
 
@@ -72,8 +64,6 @@ public  class Level {
      * @param type the char representation of the type of board element that will be placed.
      */
     public void put(int l, int c, char type) {
-
-        charElements[c][l] = type;
 
         switch (type) {
             case '@':
@@ -151,10 +141,18 @@ public  class Level {
         return hero;
     }
 
-
     public Virus getVirus(int i){
         return virusList.get(i);
     }
+
+    public int getVirus(Virus virus){
+        return virusList.indexOf(virus);
+    }
+
+    public void removeVirus(int i){
+        virusList.remove(i);
+    }
+
 
     public int getVirusCount(){
         return virusList.size();
@@ -167,15 +165,11 @@ public  class Level {
     public void swap (Location oldLocation,Location newLocation){
 
         elements[newLocation.x][newLocation.y] = elements[oldLocation.x][oldLocation.y] ;
-        charElements[newLocation.x][newLocation.y] = charElements[oldLocation.x][oldLocation.y];
         elements[oldLocation.x][oldLocation.y] = null;
-        charElements[oldLocation.x][oldLocation.y] = '.';
     }
 
     public void deleteElement(Location oldLocation){
         elements[oldLocation.x][oldLocation.y] = null;
-        charElements[oldLocation.x][oldLocation.y] = '.';
-
     }
 
 
@@ -183,11 +177,12 @@ public  class Level {
         int i = 0 ;
 
         output.printf("#%d %d x %d %n" ,savedLevel,arenaHeight,arenaWidth );
-        for (int row = 0; row < arenaHeight; row++) {
+        for (int l = 0; l < arenaHeight; l++) {
 
-            for (int col = 0 ; col < arenaWidth; col++) {
-                output.print(charElements[col][row]);
-                if(col%8 ==0 && col != 0 )output.println();
+            for (int c = 0 ; c < arenaWidth; c++) {
+                if(getElementAt(c,l)!=null) output.print(getElementAt(c,l).getChar());
+                else output.print('.');
+                if(c%8 ==0 && c != 0 )output.println();
             }
         }
     }

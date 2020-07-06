@@ -13,6 +13,8 @@ public class Wall extends LevelElement {
      */
     public Wall(Location location) {
         super(location);
+        this.character = 'X';
+
     }
 
     public Tile tileType(Context context){

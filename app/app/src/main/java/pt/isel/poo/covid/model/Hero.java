@@ -12,8 +12,10 @@ public class Hero extends LevelElement {
 
     private int arenaWidth,arenaHeight;
     private Direction currentDirection;
-    private Level level;
     private boolean isDead;
+    private Level level;
+
+
 
     /**
      * Initiates a Hero placing it at the given location.
@@ -25,6 +27,8 @@ public class Hero extends LevelElement {
         this.arenaHeight = arenaHeight;
         this.arenaWidth = arenaWidth;
         this.level = level;
+        this.character = '@';
+
     }
 
 
@@ -49,11 +53,13 @@ public class Hero extends LevelElement {
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
         }
-
+        else isDead(currentDirection);
     }
 
     public void isDead(Direction direction){
         final Location newLocation = position.add(direction);
+        if(newLocation.x >= 0 && newLocation.x < arenaWidth &&
+                newLocation.y >= 0 && newLocation.y < arenaHeight)
         isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
     }
 
@@ -76,11 +82,4 @@ public class Hero extends LevelElement {
     }
 
 }
-
-
-
-
-
-
-
 

@@ -7,6 +7,7 @@ import pt.isel.poo.covid.tile.Tile;
 public abstract class LevelElement {
 
     protected Location position;
+    protected char character;
 
     protected LevelElement(Location position){
         this.position = position;
@@ -19,5 +20,9 @@ public abstract class LevelElement {
     public Tile tileType(Context context){
         return null ;
 
+    }
+
+    public char getChar(){
+        return character;
     }
 }
