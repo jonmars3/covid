@@ -1,16 +1,8 @@
 package pt.isel.poo.covid.view;
 
-import android.content.Context;
-
-import pt.isel.poo.covid.model.Hero;
-
-
 import pt.isel.poo.covid.model.Level;
 import pt.isel.poo.covid.model.LevelElement;
 import pt.isel.poo.covid.model.Location;
-import pt.isel.poo.covid.model.TrashCan;
-import pt.isel.poo.covid.model.Virus;
-import pt.isel.poo.covid.model.Wall;
 
 import pt.isel.poo.covid.tile.Tile;
 import pt.isel.poo.covid.tile.TilePanel;
@@ -30,21 +22,15 @@ public class LevelView {
     }
 
     
-    public void onChange(Level level){
-        for(int x = 0; x < level.arenaWidth; ++x) {
-            for(int y = 0; y < level.arenaHeight; ++y) {
-                // TODO: Prevent the instantiation of all these objects
-                updatePosition(new Location(x, y));
-
-            }
-        }
+    public void onChange(int x1,int y1,int x2, int y2){
+        updatePosition(new Location(x1,y1));
+        updatePosition(new Location(x2, y2));
 
     }
 
     private void initialize() {
         for(int x = 0; x < level.arenaWidth; ++x) {
             for(int y = 0; y < level.arenaHeight; ++y) {
-                // TODO: Prevent the instantiation of all these objects
                 updatePosition(new Location(x, y));
 
             }
@@ -54,7 +40,6 @@ public class LevelView {
     private void updatePosition(Location position) {
         final LevelElement element = level.getElementAt(position.x, position.y);
         Tile tile = null;
-
         if(element!=null) tile = element.tileType(panel.getContext());
         panel.setTile(position.x, position.y,tile);
     }
