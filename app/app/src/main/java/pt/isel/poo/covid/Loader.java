@@ -1,7 +1,9 @@
-package pt.isel.poo.covid.model;
+package pt.isel.poo.covid;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import pt.isel.poo.covid.model.Level;
 
 /**
  * Loads a game level from the file read with the scanner indicated in the constructor.<br/>
