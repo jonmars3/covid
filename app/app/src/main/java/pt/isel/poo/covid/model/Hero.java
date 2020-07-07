@@ -2,6 +2,7 @@ package pt.isel.poo.covid.model;
 
 import android.content.Context;
 
+
 import pt.isel.poo.covid.tile.Tile;
 import pt.isel.poo.covid.view.HeroTile;
 
@@ -14,7 +15,7 @@ public class Hero extends LevelElement {
     private Direction currentDirection;
     private boolean isDead;
     private Level level;
-
+    private Location oldPosition;
 
 
     /**
@@ -28,10 +29,11 @@ public class Hero extends LevelElement {
         this.arenaWidth = arenaWidth;
         this.level = level;
         this.character = '@';
+        this.oldPosition = location;
+
+
 
     }
-
-
     public boolean canMove(Direction direction){
         final Location newLocation = position.add(direction);
         return newLocation.x >= 0 && newLocation.x < arenaWidth &&
@@ -49,21 +51,22 @@ public class Hero extends LevelElement {
             throw new IllegalStateException();
         if (canMove(currentDirection)) {
 
-            Location oldPosition = position;
+            oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
+
         }
-        else isDead(currentDirection);
+        else setDead(currentDirection);
     }
 
-    public void isDead(Direction direction){
+    public void setDead(Direction direction){
         final Location newLocation = position.add(direction);
         if(newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight)
         isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
     }
 
-    public boolean getDead(){
+    public boolean isDead(){
         return isDead;
     }
 
@@ -81,5 +84,10 @@ public class Hero extends LevelElement {
         return tile;
     }
 
+
+
+    public Location getOldPosition(){
+        return oldPosition;
+    }
 }
 

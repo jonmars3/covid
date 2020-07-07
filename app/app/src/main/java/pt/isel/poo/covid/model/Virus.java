@@ -12,6 +12,7 @@ public class Virus extends LevelElement {
     private Direction currentDirection;
     private Level level;
     private boolean isDead;
+    private Location oldPosition;
 
     public Virus(Location location,Direction direction,int arenaWidth,int arenaHeight,Level level) {
         super(location);
@@ -20,6 +21,7 @@ public class Virus extends LevelElement {
         this.arenaHeight = arenaHeight;
         this.level = level;
         this.character = '*';
+        this.oldPosition = location;
 
     }
 
@@ -39,27 +41,34 @@ public class Virus extends LevelElement {
      */
     public void move() {
 
+
         if (canMove(currentDirection)) {
-            Location oldPosition = position;
+            oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
+
         }
 
         if(currentDirection == Direction.SOUTH){
-            isDead(currentDirection);
-            if(isDead){
+            setDead(currentDirection);
+            if(isDead()){
                 level.deleteElement(position);
-                level.removeVirus(level.getVirus(this));
+
             }
+
         }
     }
 
-    public boolean isDead(Direction direction){
+    public void setDead(Direction direction){
         final Location newLocation = position.add(direction);
 
         if(position.x >= 0 && position.x < arenaWidth &&
                 position.y >= 0 && position.y < arenaHeight)
-            isDead = (level.getElementAt(newLocation.x,newLocation.y).getChar() == 'V');
+            isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+
+    }
+
+    public boolean isDead(){
         return isDead;
     }
 
@@ -70,6 +79,10 @@ public class Virus extends LevelElement {
     public Tile tileType(Context context){
         Tile tile = new VirusTile(context);
         return tile;
+    }
+
+    public Location getOldPosition(){
+        return oldPosition;
     }
 
 }
