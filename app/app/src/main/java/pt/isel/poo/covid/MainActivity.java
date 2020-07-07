@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     TextView virusText;
     TextView levelText;
     Button okButton;
-    private int okCount = 0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     if(level == null){
                         showButtons(getResources().getString(R.string.noMoreLevels));
-                        System.out.println(level);
                         currentLevel--;
                     }
                 }
