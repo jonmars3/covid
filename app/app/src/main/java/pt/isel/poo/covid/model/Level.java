@@ -3,10 +3,6 @@ package pt.isel.poo.covid.model;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import java.util.Scanner;
-
-
-
 public  class Level {
 
 
@@ -14,6 +10,7 @@ public  class Level {
     public int arenaLevel;
     private final LevelElement[][]elements;     //Array that contains the elements.
     ArrayList<Virus> virusList = new ArrayList<Virus>(); //Array that contains the virus present in the current level
+
 
     /**
      *  @param levelNumber the number of the level
@@ -36,12 +33,6 @@ public  class Level {
     public int getNumber() {
         return arenaLevel;
     }
-
-    public static Level setLevel(Scanner in, int currentLevel) throws Loader.LevelFormatException {
-        Loader loader = new Loader(in);
-        return loader.load(currentLevel);
-    }
-
 
     /**
      * Resets the bi-dimensional array.
@@ -141,19 +132,9 @@ public  class Level {
         return hero;
     }
 
-    public Virus getVirus(int i){
-        return virusList.get(i);
+    public ArrayList getVirusList (){
+        return virusList;
     }
-
-    public int getVirus(Virus virus){
-        return virusList.indexOf(virus);
-    }
-
-    public void removeVirus(int i){
-        virusList.remove(i);
-    }
-
-
     public int getVirusCount(){
         return virusList.size();
     }
@@ -166,6 +147,7 @@ public  class Level {
 
         elements[newLocation.x][newLocation.y] = elements[oldLocation.x][oldLocation.y] ;
         elements[oldLocation.x][oldLocation.y] = null;
+
     }
 
     public void deleteElement(Location oldLocation){
