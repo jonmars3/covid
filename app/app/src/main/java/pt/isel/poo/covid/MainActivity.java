@@ -1,6 +1,5 @@
 package pt.isel.poo.covid;
 
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +7,7 @@ import android.animation.TimeAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,12 +16,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
 import pt.isel.poo.covid.model.Direction;
 import pt.isel.poo.covid.model.Hero;
 import pt.isel.poo.covid.model.Level;
-import pt.isel.poo.covid.model.Loader;
 import pt.isel.poo.covid.model.Virus;
 import pt.isel.poo.covid.tile.TilePanel;
 import pt.isel.poo.covid.view.LevelView;
@@ -31,44 +31,52 @@ public class MainActivity extends AppCompatActivity {
     private final String FILENAME = "covid_levels.txt";
     private final String SAVEFILE = "saved_level.txt";
     private final String TESTFILE = "test_file.txt";
+    public int currentLevel = 1;
     private Level level ;
     private Scanner in  ;
-    private int currentLevel = 1;
     private LevelView view;
     private Hero hero;
+    private ArrayList <Virus> virusList;
     TextView gameStateText;
+    TextView virusText;
+    TextView levelText;
     Button okButton;
-    private int okButtonCount = 0; // when there are no more levels to be loaded
+    private int okCount = 0 ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ArrayList<Virus> virusArray = new ArrayList<>();
-        final TextView virusText = findViewById(R.id.virusText);
-        final TextView levelText = findViewById(R.id.levelText);
+
         final TilePanel panel = findViewById(R.id.levelView);
+        virusText = findViewById(R.id.virusText);
+        levelText = findViewById(R.id.levelText);
         if(savedInstanceState == null) {
+
             try {
-                initializeLevel(FILENAME, currentLevel, panel, levelText, virusText, virusArray);
+                initializeLevel(FILENAME, currentLevel, panel);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Loader.LevelFormatException e) {
                 e.printStackTrace();
             }
+
+
         }
         else{
             try {
                 SharedPreferences prefs = getSharedPreferences("PreferencesName", MODE_PRIVATE);
                 currentLevel = prefs.getInt("currentLevel", 0);
-                loadSavedLevel(TESTFILE,currentLevel,panel,levelText,virusText,virusArray);
+                loadSavedLevel(TESTFILE,currentLevel,panel);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Loader.LevelFormatException e) {
                 e.printStackTrace();
             }
         }
+
+
 
 
         Button saveButton = findViewById(R.id.saveButton);
@@ -101,9 +109,33 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        okButton = findViewById(R.id.okButton);
         gameStateText = findViewById(R.id.gameStateMessage);
+        okButton = findViewById(R.id.okButton);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                if(gameStateText.getText().toString().equals(getResources().getString(R.string.nothingToLoad))) hideButtons();
+                if(gameStateText.getText().toString().equals(getResources().getString(R.string.gameOver))) quit();
+                if(gameStateText.getText().toString().equals(getResources().getString(R.string.noMoreLevels))) quit();
+                if(gameStateText.getText().toString().equals(getResources().getString(R.string.levelCompleted))){
+                    try {
+                        currentLevel++;
+                        initializeLevel(FILENAME,currentLevel,panel);
+                        hideButtons();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (Loader.LevelFormatException e) {
+                        e.printStackTrace();
+                    }
+                    if(level == null){
+                        showButtons(getResources().getString(R.string.noMoreLevels));
+                        System.out.println(level);
+                        currentLevel--;
+                    }
+                }
+            }
+        });
+
         Button loadButton = findViewById(R.id.loadButton);
 
         //load saved file
@@ -114,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
                         SharedPreferences prefs = getSharedPreferences("PreferencesName", MODE_PRIVATE);
                         currentLevel = prefs.getInt("savedLevel", 0);
-                        loadSavedLevel(SAVEFILE,currentLevel,panel,levelText,virusText,virusArray);
+                        loadSavedLevel(SAVEFILE,currentLevel,panel);
                         hideButtons();
                     }
                     else {
@@ -140,91 +172,129 @@ public class MainActivity extends AppCompatActivity {
             int interval = 350;
             @Override
             public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-                if (!hero.getDead() && (( virusArray.size() != 0))) {
-                    //Gravity effect
-                    if (elapsedTime >= interval) {
-                        elapsedTime = 0;
-                        for (int i = 0; i < virusArray.size(); i++) {
-                            virusArray.get(i).changeDirection(Direction.SOUTH);
-                            virusArray.get(i).move();
-                            //if going towards trashcan
-                            if(virusArray.get(i).isDead(Direction.SOUTH)){
-                                virusArray.get(i).move();
-                                virusArray.remove(i);
-                                virusText.setText(getResources().getString(R.string.virus) + virusArray.size());
-
-                            }
-                            if(virusArray.size() > 0 && i<virusArray.size()) virusArray.get(i).changeDirection(Direction.NONE); //Restore no direction
-                        }
-                        heroGravity();
-
-                    }
-                    else {
-                        //Movement by player
-                        if(hero.getHeroDirection() == Direction.EAST || hero.getHeroDirection() == Direction.WEST){
-                            //check if hero move towards virus
-                            for (int i = 0; i < virusArray.size(); i++) {
-                                if((hero.getPosition().add(hero.getHeroDirection()).x == virusArray.get(i).getPosition().x) &&
-                                        hero.getPosition().add(hero.getHeroDirection()).y == virusArray.get(i).getPosition().y) {
-                                    virusArray.get(i).changeDirection(hero.getHeroDirection());
-                                    virusArray.get(i).move();
-                                }
-                            }
-                            elapsedTime =0;
-                            heroMove();
+            if(level!=null)
+                    if(!hero.isDead() && level.getVirusCount() > 0){
+                        //Movement caused by gravity
+                        if (elapsedTime >= interval) {
+                            elapsedTime = 0;
+                            heroMoveDown();
+                            virusMoveDown();
+                            updateText();
 
                         }
-                        elapsedTime += deltaTime;//Increase time
-
+                    //Movement cause by player
+                        else{
+                            elapsedTime += deltaTime;
+                            if(hero.getHeroDirection() == Direction.EAST || hero.getHeroDirection() == Direction.WEST){
+                                //Virus movement
+                                virusMove(hero.getHeroDirection());
+                                //Player movement
+                                heroMove();
+                                //Reset time
+                                elapsedTime = 0 ;
+                        }
                     }
-                    if(level != null)
-                        view.onChange(level);
-                }
-                //Game Over
+                    }
+                // Player is dead or no more virus on the current level.
                 else{
-                    if(virusArray.size() == 0 ){
-                        if(level!=null)showButtons(getResources().getString(R.string.levelCompleted));
+                    //Level Completed / No more Virus
+                    if(virusList.size() == 0){
+                        showButtons(getResources().getString(R.string.levelCompleted));
 
-                        okButton.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-
-                                try {
-                                    in = new Scanner(getAssets().open(FILENAME));
-                                    currentLevel++;
-                                    level = Level.setLevel(in,currentLevel);
-
-
-                                    //Next level  not found
-                                    if (level == null) {
-                                        okButtonCount++;
-                                        showButtons(getResources().getString(R.string.noMoreLevels));
-                                       if (okButtonCount ==2)quit();
-                                    }
-                                    //Next level found
-                                    else{
-                                        hideButtons();
-                                        initializeLevel(FILENAME,currentLevel,panel,levelText,virusText,virusArray);
-                                    }
-                                }
-                                catch (Loader.LevelFormatException | IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
                     }
+                    //Player is dead
                     else{
                         showButtons(getResources().getString(R.string.gameOver));
-                        okButton.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
-                                quit();
-                            }
-                        });
-
                     }
                 }
             }
         });
         animator.start();
+    }
+
+    public  void setLevel(Scanner in, int currentLevel) throws Loader.LevelFormatException {
+        Loader loader = new Loader(in);
+        level =  loader.load(currentLevel);
+
+    }
+
+    public void initializeLevel(String fileName,int currentLevel,TilePanel panel) throws IOException, Loader.LevelFormatException {
+
+        in = new Scanner(getAssets().open(fileName));
+        setLevel(in,currentLevel);
+        if(level!=null){
+            view = new LevelView(panel,level);
+            hero = level.getHero();
+            virusList = level.getVirusList();
+            updateText();
+
+        }
+    }
+
+    public void heroMove(){
+        hero.move();
+        hero.changeDirection(Direction.NONE);
+        view.onChange(hero.getOldPosition().x,hero.getOldPosition().y,hero.getPosition().x,hero.getPosition().y);
+
+    }
+
+    public void heroMoveDown( ){
+        hero.changeDirection(Direction.SOUTH);
+        hero.move();
+        hero.changeDirection(Direction.NONE);
+        view.onChange(hero.getOldPosition().x,hero.getOldPosition().y,hero.getPosition().x,hero.getPosition().y);
+
+    }
+
+    public void virusMove(Direction direction){
+        Iterator<Virus> itr = virusList.iterator();
+        while (itr.hasNext()){
+            Virus virus = itr.next();
+            if(hero.getPosition().add(direction).x == virus.getPosition().x &&
+            hero.getPosition().add(direction).y == virus.getPosition().y){
+                virus.changeDirection(direction);
+                virus.move();
+                virus.changeDirection(Direction.NONE);
+                view.onChange(virus.getOldPosition().x,virus.getOldPosition().y,virus.getPosition().x,virus.getPosition().y);
+
+
+            }
+        }
+    }
+
+    public void virusMoveDown(){
+        Iterator<Virus> itr = virusList.iterator();
+        while (itr.hasNext()){
+            Virus virus = itr.next();
+            virus.changeDirection(Direction.SOUTH);
+            if(virus.isDead())itr.remove();
+            virus.move();
+            updateText();
+            virus.changeDirection(Direction.NONE);
+            view.onChange(virus.getOldPosition().x,virus.getOldPosition().y,virus.getPosition().x,virus.getPosition().y);
+
+        }
+    }
+
+    public void quit(){
+        finish();
+        System.exit(0);
+    }
+
+    public void hideButtons(){
+        gameStateText.setVisibility(View.INVISIBLE);
+        okButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void showButtons(String message){
+        gameStateText.setVisibility(View.VISIBLE);
+        gameStateText.setText(message);
+        okButton.setVisibility(View.VISIBLE);
+    }
+
+    public void updateText(){
+        levelText.setText(getResources().getString(R.string.level)+ currentLevel);
+        virusText.setText(getResources().getString(R.string.virus) + virusList.size());
     }
 
     public boolean fileExists(Context context) {
@@ -235,58 +305,15 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void initializeLevel(String fileName,int currentLevel,TilePanel panel,TextView levelText,TextView virusText,ArrayList virusArray) throws IOException, Loader.LevelFormatException {
-
-        in = new Scanner(getAssets().open(fileName));
-        level = level.setLevel(in,currentLevel);
-        view = new LevelView(panel,level);
-        hero = level.getHero();
-        levelText.setText(getResources().getString(R.string.level) + currentLevel);
-        for (int i = 0; i < level.getVirusCount(); i++) {
-            virusArray.add(level.getVirus(i));
-        }
-        virusText.setText(getResources().getString(R.string.virus) + virusArray.size());
-    }
-
-    public void loadSavedLevel(String fileName,int currentLevel,TilePanel panel,TextView levelText,TextView virusText,ArrayList virusArray) throws IOException, Loader.LevelFormatException {
+    public void loadSavedLevel(String fileName,int currentLevel,TilePanel panel) throws IOException, Loader.LevelFormatException {
 
         in = new Scanner(openFileInput(fileName));
-        level = level.setLevel(in,currentLevel);
+        setLevel(in,currentLevel);
         view = new LevelView(panel,level);
         hero = level.getHero();
-        levelText.setText(getResources().getString(R.string.level) + currentLevel);
-        virusArray.clear();
-        for (int i = 0; i < level.getVirusCount(); i++) {
-            virusArray.add(level.getVirus(i));
-        }
-        virusText.setText(getResources().getString(R.string.virus) + virusArray.size());
+        virusList = level.getVirusList();
+        updateText();
 
-    }
-
-    public void showButtons(String message){
-        gameStateText.setVisibility(View.VISIBLE);
-        gameStateText.setText(message);
-        okButton.setVisibility(View.VISIBLE);
-    }
-    public void hideButtons(){
-        gameStateText.setVisibility(View.INVISIBLE);
-        okButton.setVisibility(View.INVISIBLE);
-    }
-
-    public void heroMove(){
-        hero.move();
-        hero.changeDirection(Direction.NONE);
-    }
-    public void heroGravity( ){
-        hero.changeDirection(Direction.SOUTH);
-        hero.move();
-        hero.isDead(Direction.SOUTH);
-        hero.changeDirection(Direction.NONE);
-    }
-
-    public void quit(){
-        finish();
-        System.exit(0);
     }
 
 
@@ -306,3 +333,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+
