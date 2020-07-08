@@ -1,4 +1,4 @@
-package pt.isel.poo.covid.tile;
+package pt.isel.poo.tile;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -11,8 +11,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
-import pt.isel.poo.covid.R;
-
 
 /*
  * Este import deve ser adaptado para usar a classe R do projeto
