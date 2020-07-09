@@ -110,14 +110,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Save" />
+                android:text="@string/save" />
 
             <Button
                 android:id="@+id/loadButton"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Load" />
+                android:text="@string/load" />
         </LinearLayout>
 
         <LinearLayout
