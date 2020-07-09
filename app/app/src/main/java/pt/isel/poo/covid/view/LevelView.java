@@ -1,5 +1,7 @@
 package pt.isel.poo.covid.view;
 
+import java.util.List;
+
 import pt.isel.poo.covid.model.Level;
 import pt.isel.poo.covid.model.LevelElement;
 import pt.isel.poo.covid.model.Location;
@@ -12,27 +14,27 @@ public class LevelView {
     private final TilePanel panel;
     private final Level level;
 
-
-
     public LevelView(TilePanel panel, Level level) {
         this.panel = panel;
         this.level = level;
         initialize();
+        level.addChangeListener(new Level.ChangeListener() {
+            @Override
+            public void onChanged(List<Location> changedLocations) {
+                for (Location location : changedLocations) {
+                    updatePosition(location);
+                }
+            }
+        });
         
     }
 
-    
-    public void onChange(int x1,int y1,int x2, int y2){
-        updatePosition(new Location(x1,y1));
-        updatePosition(new Location(x2, y2));
-
-    }
 
     private void initialize() {
+        // TODO: Prevent the instantiation of all these objects
         for(int x = 0; x < level.arenaWidth; ++x) {
             for(int y = 0; y < level.arenaHeight; ++y) {
                 updatePosition(new Location(x, y));
-
             }
         }
     }
