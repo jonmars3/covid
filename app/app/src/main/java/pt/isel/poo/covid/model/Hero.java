@@ -11,31 +11,33 @@ import pt.isel.poo.covid.view.HeroTile;
  */
 public class Hero extends LevelElement {
 
-    private int arenaWidth,arenaHeight;
+
     private Direction currentDirection;
     private boolean isDead;
     private Level level;
     private Location oldPosition;
+    private int arenaWidth,arenaHeight;
 
 
     /**
      * Initiates a Hero placing it at the given location.
      * @param location  the location where the wall is placed.
      */
-    public Hero(Location location,Direction initialDirection,int arenaWidth,int arenaHeight,Level level) {
+    public Hero(Location location,Level level) {
         super(location);
-        this.currentDirection = initialDirection;
-        this.arenaHeight = arenaHeight;
-        this.arenaWidth = arenaWidth;
-        this.level = level;
+        this.currentDirection = Direction.NONE;
         this.character = '@';
         this.oldPosition = location;
+        this.arenaWidth = level.arenaWidth;
+        this.arenaHeight = level.arenaHeight;
+        this.level = level;
 
 
 
     }
     public boolean canMove(Direction direction){
         final Location newLocation = position.add(direction);
+
         return newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight &&
                 !(level.getElementAt(newLocation.x,newLocation.y) instanceof Wall) &&
@@ -47,10 +49,11 @@ public class Hero extends LevelElement {
      * Moves the hero in the selected direction
      */
     public void move() {
+        System.out.println(currentDirection);
         if (isDead)
             throw new IllegalStateException();
         if (canMove(currentDirection)) {
-
+            System.out.println("TESTE 2");
             oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
@@ -85,9 +88,5 @@ public class Hero extends LevelElement {
     }
 
 
-
-    public Location getOldPosition(){
-        return oldPosition;
-    }
 }
 

@@ -4,7 +4,8 @@ import android.content.Context;
 
 import pt.isel.poo.covid.tile.Tile;
 
-public abstract class LevelElement {
+public abstract class LevelElement{
+
 
     protected Location position;
     protected char character;

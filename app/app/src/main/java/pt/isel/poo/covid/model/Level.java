@@ -2,6 +2,7 @@ package pt.isel.poo.covid.model;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public  class Level {
 
@@ -23,6 +24,23 @@ public  class Level {
         arenaWidth = width;
         arenaHeight = height;
         elements = new LevelElement[width][height];
+        listeners = new ArrayList<>();
+
+    }
+
+
+
+    ArrayList<Location> changedLocations = new ArrayList<Location>();
+    private final ArrayList<ChangeListener> listeners;
+    public interface ChangeListener {
+        void onChanged(List<Location> changedLocations);
+
+    }
+
+    private void fireChangeEvent(List<Location> changedList) {
+        for (ChangeListener listener : listeners) {
+            listener.onChanged(changedList);
+        }
 
     }
 
@@ -47,6 +65,7 @@ public  class Level {
         }
     }
 
+    ElementFactory elementFactory = new ElementFactory();
     /**
      * Places the elements on the bi-dimensional array
      *
@@ -55,79 +74,18 @@ public  class Level {
      * @param type the char representation of the type of board element that will be placed.
      */
     public void put(int l, int c, char type) {
+        LevelElement levelElement =  elementFactory.getElement(c,l,type,this);
+        elements[c][l] = levelElement;
+        if(type == '*')virusList.add((Virus)levelElement);
+        if(type == '@')setHero(levelElement);
 
-        switch (type) {
-            case '@':
-
-                initHero(c, l);
-                elements[c][l] = hero;
-                break;
-
-            case 'X':
-
-                initWall(c, l);
-                elements[c][l] = wall;
-                break;
-
-            case '*':
-
-                initVirus(c, l);
-                elements[c][l] = virus;
-
-                break;
-
-            case 'V':
-
-                initTrashCan(c, l);
-                elements[c][l] = trashCan;
-                break;
-
-            default:
-                elements[c][l] = null;
-        }
     }
 
-    /**
-     * The hero instance.
-     */
     private Hero hero;
 
-    /**
-     * The trashCan instance.
-     */
-    private TrashCan trashCan;
-    /**
-     * The virus instance.
-     */
-    private Virus virus;
-
-    /**
-     * The wall instance.
-     */
-    private Wall wall;
-
-    /**
-     *
-     * @param c the "column" where the element will be placed.
-     * @param l the "row" where the element will be placed.
-     */
-    private void initVirus(int c, int l) {
-        virus = new Virus(new Location(c, l),Direction.NONE,arenaWidth,arenaHeight,this);
-        virusList.add(virus);
+    public void setHero(LevelElement lE){
+        hero = (Hero)lE;
     }
-
-    private void initTrashCan(int c, int l) {
-        trashCan = new TrashCan(new Location(c, l));
-    }
-
-    private void initWall(int c, int l) {
-        wall = new Wall(new Location(c, l));
-    }
-
-    private void initHero(int c, int l) {
-        hero = new Hero(new Location(c, l),Direction.NONE,arenaWidth,arenaHeight,this);
-    }
-
     public Hero getHero(){
         return hero;
     }
@@ -147,16 +105,20 @@ public  class Level {
 
         elements[newLocation.x][newLocation.y] = elements[oldLocation.x][oldLocation.y] ;
         elements[oldLocation.x][oldLocation.y] = null;
+        changedLocations.add(oldLocation);
+        changedLocations.add(newLocation);
+        fireChangeEvent(changedLocations);
 
     }
 
     public void deleteElement(Location oldLocation){
         elements[oldLocation.x][oldLocation.y] = null;
+        changedLocations.add(oldLocation);
+        fireChangeEvent(changedLocations);
     }
 
 
     public void save(PrintStream output,int savedLevel){
-        int i = 0 ;
 
         output.printf("#%d %d x %d %n" ,savedLevel,arenaHeight,arenaWidth );
         for (int l = 0; l < arenaHeight; l++) {
@@ -167,5 +129,9 @@ public  class Level {
                 if(c%8 ==0 && c != 0 )output.println();
             }
         }
+    }
+
+    public void addChangeListener(ChangeListener listener) {
+        listeners.add(listener);
     }
 }
