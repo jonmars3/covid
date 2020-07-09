@@ -22,4 +22,7 @@ public class TrashCan extends LevelElement {
         return tile;
     }
 
+    public boolean killsElement(){
+        return true;
+    }
 }

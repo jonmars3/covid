@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.isel.poo.covid.ElementFactory.ElementFactory;
+
 public  class Level {
 
 

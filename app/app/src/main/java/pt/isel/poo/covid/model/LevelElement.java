@@ -26,4 +26,16 @@ public abstract class LevelElement{
     public char getChar(){
         return character;
     }
+
+    public boolean killsElement(){
+        return false;
+    }
+
+    public boolean allowsHero(){
+        return true;
+    }
+
+    public boolean allowsVirus(){
+        return true;
+    }
 }

@@ -21,6 +21,5 @@ public class Wall extends LevelElement {
         Tile tile = new WallTile(context);
         return tile;
     }
-
 }
 

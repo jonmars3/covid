@@ -27,10 +27,7 @@ public class Virus extends LevelElement {
         final Location newLocation = position.add(direction);
         return newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Wall) &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Hero) &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan) &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Virus);
+                (level.getElementAt(newLocation.x,newLocation.y) == null);
 
     }
 
@@ -57,7 +54,7 @@ public class Virus extends LevelElement {
 
         if(newLocation.x >= 0 && newLocation.y < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight)
-            isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+            isDead = (level.getElementAt(newLocation.x,newLocation.y).killsElement());
 
     }
 
@@ -73,7 +70,5 @@ public class Virus extends LevelElement {
         Tile tile = new VirusTile(context);
         return tile;
     }
-
-
 }
 

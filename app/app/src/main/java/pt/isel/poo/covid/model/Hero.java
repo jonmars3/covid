@@ -40,20 +40,16 @@ public class Hero extends LevelElement {
 
         return newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Wall) &&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan)&&
-                !(level.getElementAt(newLocation.x,newLocation.y) instanceof Virus);
+                (level.getElementAt(newLocation.x,newLocation.y) == null);
     }
 
     /**
      * Moves the hero in the selected direction
      */
     public void move() {
-        System.out.println(currentDirection);
         if (isDead)
             throw new IllegalStateException();
         if (canMove(currentDirection)) {
-            System.out.println("TESTE 2");
             oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
@@ -66,7 +62,7 @@ public class Hero extends LevelElement {
         final Location newLocation = position.add(direction);
         if(newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight)
-        isDead = (level.getElementAt(newLocation.x,newLocation.y) instanceof TrashCan);
+        isDead = (level.getElementAt(newLocation.x,newLocation.y).killsElement());
     }
 
     public boolean isDead(){
@@ -86,7 +82,5 @@ public class Hero extends LevelElement {
         Tile tile = new HeroTile(context,this);
         return tile;
     }
-
-
 }
 
