@@ -7,7 +7,6 @@ import android.animation.TimeAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,13 +15,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 import pt.isel.poo.covid.model.Direction;
 import pt.isel.poo.covid.model.Hero;
 import pt.isel.poo.covid.model.Level;
 import pt.isel.poo.covid.model.Virus;
+import pt.isel.poo.covid.tile.OnTileTouchListener;
 import pt.isel.poo.covid.tile.TilePanel;
 import pt.isel.poo.covid.view.LevelView;
 
@@ -42,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
     TextView levelText;
     Button okButton;
 
+    private final Map<Integer, Direction> directions = new HashMap<>();{
+        directions.put(R.id.leftButton, Direction.WEST);
+        directions.put(R.id.rightButton, Direction.EAST);
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +57,33 @@ public class MainActivity extends AppCompatActivity {
 
 
         final TilePanel panel = findViewById(R.id.levelView);
+
+        //TODO: DO THIS WITH THE PROPER FORMULA RIGHT FOR UPPER DIAGONAL,LEFT FOR LOWER DIAGONAL.(RELATIVE TO PLAYER POSITION)
+        panel.setListener(new OnTileTouchListener() {
+            @Override
+            public boolean onClick(int xTile, int yTile) {
+                if(hero.getPosition().x > xTile)hero.changeDirection(Direction.WEST);
+                if(hero.getPosition().x < xTile)hero.changeDirection(Direction.EAST);
+
+                return false;
+            }
+
+            @Override
+            public boolean onDrag(int xFrom, int yFrom, int xTo, int yTo) {
+                return false;
+            }
+
+            @Override
+            public void onDragEnd(int x, int y) {
+
+            }
+
+            @Override
+            public void onDragCancel() {
+
+            }
+        });
+
         virusText = findViewById(R.id.virusText);
         levelText = findViewById(R.id.levelText);
         if(savedInstanceState == null) {
@@ -60,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (Loader.LevelFormatException e) {
                 e.printStackTrace();
             }
-
-
         }
         else{
             try {
@@ -76,11 +109,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
+        //save button
         Button saveButton = findViewById(R.id.saveButton);
-        //save on file
-        //TODO: implement save by just creating a new Level object
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try (PrintStream output = new PrintStream(openFileOutput(SAVEFILE, MODE_PRIVATE))) {
@@ -88,35 +118,39 @@ public class MainActivity extends AppCompatActivity {
                     editor.putInt("savedLevel", currentLevel);
                     editor.apply();
 
-                    level.save(output,currentLevel);
+                    if(level!=null)level.save(output,currentLevel);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        findViewById(R.id.leftButton).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                hero.changeDirection(Direction.WEST);
-
+        final View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View source) {
+                hero.changeDirection(directions.get(source.getId()));
             }
-        });
-        findViewById(R.id.rightButton).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                hero.changeDirection(Direction.EAST);
+        };
 
+        findViewById(R.id.leftButton).setOnClickListener(listener);
+        findViewById(R.id.rightButton).setOnClickListener(listener);
 
-            }
-        });
+        //the game state text that starts hidden
         gameStateText = findViewById(R.id.gameStateMessage);
+
+        //hidden ok button
         okButton = findViewById(R.id.okButton);
         okButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                String gameState = gameStateText.getText().toString();
 
-                if(gameStateText.getText().toString().equals(getResources().getString(R.string.nothingToLoad))) hideButtons();
-                if(gameStateText.getText().toString().equals(getResources().getString(R.string.gameOver))) quit();
-                if(gameStateText.getText().toString().equals(getResources().getString(R.string.noMoreLevels))) quit();
-                if(gameStateText.getText().toString().equals(getResources().getString(R.string.levelCompleted))){
+                if(gameState.equals(getResources().getString(R.string.nothingToLoad))) hideButtons();
+
+                if(gameState.equals(getResources().getString(R.string.gameOver))) quit();
+
+                if(gameState.equals(getResources().getString(R.string.noMoreLevels))) quit();
+
+                if(gameState.equals(getResources().getString(R.string.levelCompleted))){
                     try {
                         currentLevel++;
                         initializeLevel(FILENAME,currentLevel,panel);
@@ -144,8 +178,10 @@ public class MainActivity extends AppCompatActivity {
 
                         SharedPreferences prefs = getSharedPreferences("PreferencesName", MODE_PRIVATE);
                         currentLevel = prefs.getInt("savedLevel", 0);
-                        loadSavedLevel(SAVEFILE,currentLevel,panel);
-                        hideButtons();
+                        if(level!=null) {
+                            loadSavedLevel(SAVEFILE,currentLevel,panel);
+                            hideButtons();
+                        }
                     }
                     else {
                         showButtons(getResources().getString(R.string.nothingToLoad));
@@ -164,6 +200,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         final TimeAnimator animator = new TimeAnimator();
         animator.setTimeListener(new TimeAnimator.TimeListener() {
             int elapsedTime = 0;
@@ -175,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
                         //Movement caused by gravity
                         if (elapsedTime >= interval) {
                             elapsedTime = 0;
-                            heroMoveDown();
+                            hero.changeDirection(Direction.SOUTH);
+                            heroMove();
                             virusMoveDown();
                             updateText();
 
@@ -213,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
     public  void setLevel(Scanner in, int currentLevel) throws Loader.LevelFormatException {
         Loader loader = new Loader(in);
         level =  loader.load(currentLevel);
-
     }
+
 
     public void initializeLevel(String fileName,int currentLevel,TilePanel panel) throws IOException, Loader.LevelFormatException {
 
@@ -232,15 +270,6 @@ public class MainActivity extends AppCompatActivity {
     public void heroMove(){
         hero.move();
         hero.changeDirection(Direction.NONE);
-        view.onChange(hero.getOldPosition().x,hero.getOldPosition().y,hero.getPosition().x,hero.getPosition().y);
-
-    }
-
-    public void heroMoveDown( ){
-        hero.changeDirection(Direction.SOUTH);
-        hero.move();
-        hero.changeDirection(Direction.NONE);
-        view.onChange(hero.getOldPosition().x,hero.getOldPosition().y,hero.getPosition().x,hero.getPosition().y);
 
     }
 
@@ -253,7 +282,6 @@ public class MainActivity extends AppCompatActivity {
                 virus.changeDirection(direction);
                 virus.move();
                 virus.changeDirection(Direction.NONE);
-                view.onChange(virus.getOldPosition().x,virus.getOldPosition().y,virus.getPosition().x,virus.getPosition().y);
 
 
             }
@@ -266,10 +294,9 @@ public class MainActivity extends AppCompatActivity {
             Virus virus = itr.next();
             virus.changeDirection(Direction.SOUTH);
             if(virus.isDead())itr.remove();
-            virus.move();
-            updateText();
-            virus.changeDirection(Direction.NONE);
-            view.onChange(virus.getOldPosition().x,virus.getOldPosition().y,virus.getPosition().x,virus.getPosition().y);
+                virus.move();
+                updateText();
+                virus.changeDirection(Direction.NONE);
 
         }
     }
