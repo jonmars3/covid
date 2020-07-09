@@ -58,13 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
         final TilePanel panel = findViewById(R.id.levelView);
 
-        //TODO: DO THIS WITH THE PROPER FORMULA RIGHT FOR UPPER DIAGONAL,LEFT FOR LOWER DIAGONAL.(RELATIVE TO PLAYER POSITION)
+        //TODO: Check if there is other way to do this and if there is a simpler formula...
         panel.setListener(new OnTileTouchListener() {
             @Override
             public boolean onClick(int xTile, int yTile) {
-                if(hero.getPosition().x > xTile)hero.changeDirection(Direction.WEST);
-                if(hero.getPosition().x < xTile)hero.changeDirection(Direction.EAST);
-
+                if(Math.abs(hero.getPosition().y + yTile) < xTile - hero.getPosition().x ) hero.changeDirection(Direction.EAST);
+                if(-Math.abs(hero.getPosition().y + yTile) > xTile - hero.getPosition().x) hero.changeDirection(Direction.WEST);
                 return false;
             }
 
