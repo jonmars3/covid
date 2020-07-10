@@ -1,10 +1,8 @@
-package pt.isel.poo;
+package pt.isel.poo.covid;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
-import pt.isel.poo.covid.R;
 
 public class MainActivity extends AppCompatActivity {
 
