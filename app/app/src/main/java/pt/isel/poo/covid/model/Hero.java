@@ -63,6 +63,8 @@ public class Hero extends LevelElement {
         if(newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight)
         isDead = (level.getElementAt(newLocation.x,newLocation.y).killsElement());
+        if(isDead) level.updateElement(position);
+
     }
 
     public boolean isDead(){

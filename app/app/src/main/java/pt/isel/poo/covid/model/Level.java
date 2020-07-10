@@ -119,7 +119,10 @@ public  class Level {
         fireChangeEvent(changedLocations);
     }
 
-
+    public void updateElement(Location location){
+        changedLocations.add(location);
+        fireChangeEvent(changedLocations);
+    }
     public void save(PrintStream output,int savedLevel){
 
         output.printf("#%d %d x %d %n" ,savedLevel,arenaHeight,arenaWidth );
