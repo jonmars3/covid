@@ -7,6 +7,7 @@ import android.animation.TimeAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
+import pt.isel.poo.covid.TimeCounter.Counter;
 import pt.isel.poo.covid.model.Direction;
 import pt.isel.poo.covid.model.Hero;
 import pt.isel.poo.covid.model.Level;
@@ -62,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
         panel.setListener(new OnTileTouchListener() {
             @Override
             public boolean onClick(int xTile, int yTile) {
-                if(Math.abs(hero.getPosition().y + yTile) < xTile - hero.getPosition().x ) hero.changeDirection(Direction.EAST);
-                if(-Math.abs(hero.getPosition().y + yTile) > xTile - hero.getPosition().x) hero.changeDirection(Direction.WEST);
+                if(Math.abs(hero.getPosition().y - yTile) < xTile - hero.getPosition().x ) hero.changeDirection(Direction.EAST);
+                if(-Math.abs(hero.getPosition().y - yTile) > xTile - hero.getPosition().x) hero.changeDirection(Direction.WEST);
                 return false;
             }
 
@@ -199,14 +201,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         final TimeAnimator animator = new TimeAnimator();
         animator.setTimeListener(new TimeAnimator.TimeListener() {
             int elapsedTime = 0;
             int interval = 350;
+
             @Override
             public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-            if(level!=null)
+
+
+                if(level!=null)
                     if(!hero.isDead() && level.getVirusCount() > 0){
                         //Movement caused by gravity
                         if (elapsedTime >= interval) {
