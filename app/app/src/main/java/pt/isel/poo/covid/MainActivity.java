@@ -7,7 +7,7 @@ import android.animation.TimeAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
-import pt.isel.poo.covid.TimeCounter.Counter;
 import pt.isel.poo.covid.model.Direction;
 import pt.isel.poo.covid.model.Hero;
 import pt.isel.poo.covid.model.Level;
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private final String FILENAME = "covid_levels.txt";
     private final String SAVEFILE = "saved_level.txt";
-    private final String TESTFILE = "test_file.txt";
+    private final String ORIENTATIONSAVE = "orientation_save_file.txt";
     public int currentLevel = 1;
     private Level level ;
     private Scanner in  ;
@@ -87,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         virusText = findViewById(R.id.virusText);
         levelText = findViewById(R.id.levelText);
+        //first initialization
         if(savedInstanceState == null) {
 
             try {
@@ -98,10 +98,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else{
+            //initialization when there is a screen orientation change.
             try {
                 SharedPreferences prefs = getSharedPreferences("PreferencesName", MODE_PRIVATE);
                 currentLevel = prefs.getInt("currentLevel", 0);
-                loadSavedLevel(TESTFILE,currentLevel,panel);
+                loadSavedLevel(ORIENTATIONSAVE,currentLevel,panel);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (Loader.LevelFormatException e) {
@@ -186,11 +187,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else {
                         showButtons(getResources().getString(R.string.nothingToLoad));
-                        okButton.setOnClickListener( new View.OnClickListener() {
-                            public void onClick(View v) {
-                                hideButtons();
-                            }
-                        });
+
                     }
 
                 } catch (IOException e) {
@@ -221,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                             updateText();
 
                         }
-                    //Movement cause by player
+                    //Movement caused by player
                         else{
                             elapsedTime += deltaTime;
                             if(hero.getHeroDirection() == Direction.EAST || hero.getHeroDirection() == Direction.WEST){
@@ -231,8 +228,8 @@ public class MainActivity extends AppCompatActivity {
                                 heroMove();
                                 //Reset time
                                 elapsedTime = 0 ;
+                            }
                         }
-                    }
                     }
                 // Player is dead or no more virus on the current level.
                 else{
@@ -350,7 +347,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        try (PrintStream output = new PrintStream(openFileOutput(TESTFILE, MODE_PRIVATE))) {
+        try (PrintStream output = new PrintStream(openFileOutput(ORIENTATIONSAVE, MODE_PRIVATE))) {
             level.save(output,currentLevel);
             SharedPreferences.Editor editor = getSharedPreferences("PreferencesName", MODE_PRIVATE).edit();
             editor.putInt("currentLevel", currentLevel);

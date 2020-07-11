@@ -6,7 +6,7 @@ package pt.isel.poo.covid.model;
 public class Location {
 
 
-    public final int x,y;
+    public  int x,y;
 
     /**
      * Initiates the instance with the given coordinates

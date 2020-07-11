@@ -31,10 +31,11 @@ public class LevelView {
 
 
     private void initialize() {
-        // TODO: Prevent the instantiation of all these objects
-        for(int x = 0; x < level.arenaWidth; ++x) {
-            for(int y = 0; y < level.arenaHeight; ++y) {
-                updatePosition(new Location(x, y));
+        Location tempLoc = new Location(0, 0);
+
+        for(tempLoc.x = 0 ; tempLoc.x < level.arenaWidth ; ++tempLoc.x) {
+            for(tempLoc.y = 0 ; tempLoc.y < level.arenaHeight ; ++tempLoc.y) {
+                updatePosition(tempLoc);
             }
         }
     }
