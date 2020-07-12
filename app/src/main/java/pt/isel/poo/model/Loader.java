@@ -1,4 +1,4 @@
-package pt.isel.poo;
+package pt.isel.poo.model;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;

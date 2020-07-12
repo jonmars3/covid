@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">covid</string>
+    <string name="levelSave">Nível salvo</string>
+    <string name="levelLoad">Nível carregado</string>
+</resources>

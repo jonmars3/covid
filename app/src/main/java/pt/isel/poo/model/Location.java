@@ -8,4 +8,9 @@ public class Location {
         this.x = x;
         this.y = y;
     }
+
+    public Location add(Direction direction) {
+        //TODO: Prevent the creation of new instances each line add is called (use memoization)
+        return new Location (x + direction.dx, y + direction.dy);
+    }
 }

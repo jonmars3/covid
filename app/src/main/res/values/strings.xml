@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">covid</string>
+    <string name="failed_level_load">Could not load level</string>
+    <string name="nothing_to_load">Nothing to load</string>
+    <string name="failed_level_save">Could not save level</string>
+    <string name="level_loaded">Level loaded</string>
+    <string name="level_saved">Level saved</string>
 </resources>
