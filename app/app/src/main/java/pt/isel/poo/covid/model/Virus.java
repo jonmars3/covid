@@ -52,7 +52,7 @@ public class Virus extends LevelElement {
     public void setDead(Direction direction){
         final Location newLocation = position.add(direction);
 
-        if(newLocation.x >= 0 && newLocation.y < arenaWidth &&
+        if(newLocation.x >= 0 && newLocation.x < arenaWidth &&
                 newLocation.y >= 0 && newLocation.y < arenaHeight)
             isDead = (level.getElementAt(newLocation.x,newLocation.y).killsElement());
 
