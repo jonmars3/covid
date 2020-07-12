@@ -31,11 +31,4 @@ public abstract class LevelElement{
         return false;
     }
 
-    public boolean allowsHero(){
-        return true;
-    }
-
-    public boolean allowsVirus(){
-        return true;
-    }
 }

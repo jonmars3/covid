@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
         final TilePanel panel = findViewById(R.id.levelView);
 
-        //TODO: Check if there is other way to do this and if there is a simpler formula...
         panel.setListener(new OnTileTouchListener() {
             @Override
             public boolean onClick(int xTile, int yTile) {
@@ -342,7 +341,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    //TODO: There might be a better way to do this
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

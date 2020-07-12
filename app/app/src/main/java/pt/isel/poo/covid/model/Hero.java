@@ -15,26 +15,22 @@ public class Hero extends LevelElement {
     private Direction currentDirection;
     private boolean isDead;
     private Level level;
-    private Location oldPosition;
     private int arenaWidth,arenaHeight;
 
 
     /**
      * Initiates a Hero placing it at the given location.
-     * @param location  the location where the wall is placed.
+     * @param location  the location where the hero is placed.
      */
     public Hero(Location location,Level level) {
         super(location);
         this.currentDirection = Direction.NONE;
         this.character = '@';
-        this.oldPosition = location;
         this.arenaWidth = level.arenaWidth;
         this.arenaHeight = level.arenaHeight;
         this.level = level;
-
-
-
     }
+
     public boolean canMove(Direction direction){
         final Location newLocation = position.add(direction);
 
@@ -50,7 +46,8 @@ public class Hero extends LevelElement {
         if (isDead)
             throw new IllegalStateException();
         if (canMove(currentDirection)) {
-            oldPosition = position;
+
+            Location oldPosition = position;
             position = position.add(currentDirection);
             level.swap(oldPosition,position);
 

@@ -33,7 +33,9 @@ public  class Level {
 
 
     ArrayList<Location> changedLocations = new ArrayList<Location>();
+
     private final ArrayList<ChangeListener> listeners;
+
     public interface ChangeListener {
         void onChanged(List<Location> changedLocations);
 
@@ -57,7 +59,7 @@ public  class Level {
     /**
      * Resets the bi-dimensional array.
      */
-    //TODO: Created due to being used in a method of the Loader class(which wasn't used), See what do with it.
+
     public void reset() {
 
         for (int row = 0; row < arenaHeight; row++) {
@@ -76,7 +78,7 @@ public  class Level {
      * @param type the char representation of the type of board element that will be placed.
      */
     public void put(int l, int c, char type) {
-        LevelElement levelElement =  elementFactory.getElement(c,l,type,this);
+        LevelElement levelElement =  elementFactory.createElement(c,l,type,this);
         elements[c][l] = levelElement;
         if(type == '*')virusList.add((Virus)levelElement);
         if(type == '@')setHero(levelElement);
@@ -131,8 +133,9 @@ public  class Level {
             for (int c = 0 ; c < arenaWidth; c++) {
                 if(getElementAt(c,l)!=null) output.print(getElementAt(c,l).getChar());
                 else output.print('.');
-                if(c%8 ==0 && c != 0 )output.println();
+
             }
+            output.println();
         }
     }
 
