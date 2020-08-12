@@ -25,7 +25,7 @@ import pt.isel.poo.view.LevelView;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String LEVELS_FILE = "covid_levels.txt", SAVE_FILE = "save_state.txt";
-    private Level level = new Level(1, 9, 9);
+    private Level level = new Level (1, 9, 9);
     private LevelView view;
     private Nurse nurse;
 
@@ -36,22 +36,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final TilePanel panel = findViewById(R.id.levelView);
-        nurse = new Nurse (new Location (0,0), level);
-        view = new LevelView (panel, level, nurse);
-
         //Load first level on startup
-        try (Scanner in = new Scanner(openFileInput(LEVELS_FILE))) {
-            level.load(in, 1);
-        } catch (FileNotFoundException | Loader.LevelFormatException noFile) {
-            Toast.makeText(this, R.string.failed_level_load, Toast.LENGTH_LONG).show(); }
+        /*try (Scanner in = new Scanner(getAssets().open(LEVELS_FILE))) {
+            level = Level.load(in, 1);
+        } catch (IOException | Loader.LevelFormatException e) {
+            view.printText(R.string.failed_level_load);
+        }
+*/
+        final TilePanel panel = findViewById(R.id.levelView);
+        nurse = level.getNurse();
+        view = new LevelView (panel, level, nurse);
 
         TimeAnimator animator = new TimeAnimator ();
         animator.setTimeListener(new TimeAnimator.TimeListener() {
             int elapsedTime = 0;
             @Override
             public void onTimeUpdate(TimeAnimator animation, long totalTime, long deltaTime) {
-                if (elapsedTime >= 1000 && nurse.hasGravityEffect()) {
+                if (elapsedTime >= 1000) {
                     elapsedTime = 0;
                     Location prevLocation = nurse.getPosition();
                     nurse.move(Direction.DOWN);

@@ -1,13 +1,11 @@
 package pt.isel.poo.model;
 
-import android.content.res.AssetManager;
-
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
 public class Level {
 
+    //TODO: Add movement listener for all elements (or maybe only mandatory elements - elements that move)
     private Nurse nurse;
 
     private final int levelNumber;
@@ -19,6 +17,19 @@ public class Level {
         this.height = height;
         this.width = width;
         level = new LevelElement[width][height];
+        initNurse();
+        nurse.addMovementListener(new Nurse.MovementListener() {
+            @Override
+            public void nurseHasMoved(Location oldPosition, Location newPosition) {
+
+            }
+        })
+
+    }
+
+    private void initNurse() {
+        Location nurseInitPosition = new Location (0, 0);
+        nurse = new Nurse(nurseInitPosition, this);
     }
 
     public int getNumber() {
@@ -56,17 +67,20 @@ public class Level {
         return getElementAt(position.x, position.y);
     }
 
-    public Nurse getNurse() {
-        return nurse;
-    }
-
-    public Level load (Scanner in, int levelNumber) throws Loader.LevelFormatException {
+    public static Level load (Scanner in, int levelNumber) throws Loader.LevelFormatException {
         Loader loader = new Loader(in);
-        loader.load(levelNumber);
-        return this;
+        return loader.load(levelNumber);
     }
 
     public void save (PrintStream out) {
+
+    }
+
+    public Nurse getNurse () {
+        return nurse;
+    }
+
+    public void nurseHasMoved (Location oldPosition, Location newPosition) {
 
     }
 }
